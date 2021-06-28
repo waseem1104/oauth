@@ -1,14 +1,9 @@
-FROM php:7.4-fpm-alpine
-
-RUN apk add --no-cache autoconf openssl-dev g++ make pcre-dev icu-dev zlib-dev libzip-dev && \
-    docker-php-ext-install bcmath intl opcache zip sockets && \
-    apk del --purge autoconf g++ make && \
-    mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+FROM php:8-fpm-alpine
 
 WORKDIR /home/root
 
 COPY . .
-
+RUN chmod 755 /home/root
 ENV PORT=80
 
 COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
