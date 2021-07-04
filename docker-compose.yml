@@ -15,5 +15,5 @@ services:
       - ./oauth-client:/home/root
     working_dir: /home/root
     ports:
-      - 80:80
+      - 8086:80
       - 443:443
