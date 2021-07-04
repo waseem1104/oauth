@@ -3,6 +3,7 @@ const CLIENT_ID = "client_60a3778e70ef02.05413444";
 const CLIENT_FBID = "3648086378647793";
 const CLIENT_SECRET = "cd989e9a4b572963e23fe39dc14c22bbceda0e60";
 const CLIENT_FBSECRET = "1b5d764e7a527c2b816259f575a59942";
+const CLIENT_DISCORD = "860542851746103326";
 const STATE = "fdzefzefze";
 function handleLogin()
 {
@@ -17,6 +18,12 @@ function handleLogin()
         . "&scope=email"
         . "&state=" . STATE
         . "&redirect_uri=https://localhost/fbauth-success'>Se connecter avec Facebook</a>";
+    echo "<a href='https://discord.com/api/oauth2/authorize?response_type=code"
+        . "&client_id=" . CLIENT_DISCORD
+        . "&scope=email"
+        . "&state=" . STATE
+        . "&redirect_uri=https://localhost/discord-success"
+        . "&prompt=consent'>Se connecter avec Discord</a>";
 }
 
 function handleError()
@@ -58,6 +65,27 @@ function handleFbSuccess()
     echo file_get_contents($userUrl, false, $context);
 }
 
+function handleDiscordSuccess()
+{
+    echo 'connecter';
+//    ["state" => $state, "code" => $code] = $_GET;
+//    if ($state !== STATE) {
+//        throw new RuntimeException("{$state} : invalid state");
+//    }
+//    // https://auth-server/token?grant_type=authorization_code&code=...&client_id=..&client_secret=...
+//    $url = "https://graph.facebook.com/oauth/access_token?grant_type=authorization_code&code={$code}&client_id=" . CLIENT_FBID . "&client_secret=" . CLIENT_FBSECRET."&redirect_uri=https://localhost/fbauth-success";
+//    $result = file_get_contents($url);
+//    $resultDecoded = json_decode($result, true);
+//    ["access_token"=> $token] = $resultDecoded;
+//    $userUrl = "https://graph.facebook.com/me?fields=id,name,email";
+//    $context = stream_context_create([
+//        'http' => [
+//            'header' => 'Authorization: Bearer ' . $token
+//        ]
+//    ]);
+//    echo file_get_contents($userUrl, false, $context);
+}
+
 function getUser($params)
 {
     $url = "http://oauth-server:8081/token?client_id=" . CLIENT_ID . "&client_secret=" . CLIENT_SECRET . "&" . http_build_query($params);
@@ -91,6 +119,9 @@ switch ($route) {
         break;
     case '/fbauth-success':
         handleFbSuccess();
+        break;
+    case '/discord-success':
+        handleDiscordSuccess();
         break;
     case '/auth-cancel':
         handleError();
