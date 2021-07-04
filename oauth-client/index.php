@@ -5,6 +5,8 @@ const CLIENT_SECRET = "cd989e9a4b572963e23fe39dc14c22bbceda0e60";
 const CLIENT_FBSECRET = "1b5d764e7a527c2b816259f575a59942";
 const CLIENT_DISCORD = "861264462563639306";
 const CLIENT_DISCORD_SECRET = "_fxDVpnJXJKJzFh00FH8E5iODDnkOhKq";
+const CLIENT_GITHUB = "065edd9f71dabc71176d";
+const CLIENT_GITHUB_SECRET = "bf0713ea1c9031cca6da52694e19fe665257a53e";
 const STATE = "fdzefzefze";
 function handleLogin()
 {
@@ -26,6 +28,13 @@ function handleLogin()
         . "&state=" . STATE
         . "&redirect_uri=https://localhost/discord-success"
         . "&prompt=consent'>Se connecter avec Discord</a>";
+
+    echo "<a href='https://github.com/login/oauth/authorize?response_type=code"
+        . "&client_id=" . CLIENT_GITHUB
+        . "&scope=identify"
+        . "&state=" . STATE
+        . "&redirect_uri=https://localhost/github-success"
+        . "&prompt=consent'>Se connecter avec Github</a>";
 }
 
 function handleError()
@@ -65,6 +74,17 @@ function handleFbSuccess()
         ]
     ]);
     echo file_get_contents($userUrl, false, $context);
+}
+
+function handleGithubSuccess(){
+
+    ["state" => $state, "code" => $code] = $_GET;
+    if ($state !== STATE) {
+        throw new RuntimeException("{$state} : invalid state");
+    }
+
+    echo "connexion";
+
 }
 
 
@@ -146,6 +166,10 @@ switch ($route) {
         break;
     case '/discord-success':
         handleDiscordSuccess();
+        break;
+
+    case '/github-success':
+        handleGithubSuccess();
         break;
     case '/auth-cancel':
         handleError();
