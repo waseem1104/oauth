@@ -5,9 +5,6 @@ const CLIENT_SECRET = "cd989e9a4b572963e23fe39dc14c22bbceda0e60";
 const CLIENT_FBSECRET = "1b5d764e7a527c2b816259f575a59942";
 const CLIENT_DISCORD = "861264462563639306";
 const CLIENT_DISCORD_SECRET = "_fxDVpnJXJKJzFh00FH8E5iODDnkOhKq";
-
-const CLIENT_TWITCH = "3ts8l1qltdbnbsydqw6mazzgc7lx9e";
-const CLIENT_TWITCH_SECRET = "3on2y6i5hzqkaadnoitdcxxb0ala42";
 const STATE = "fdzefzefze";
 function handleLogin()
 {
@@ -22,12 +19,6 @@ function handleLogin()
         . "&scope=email"
         . "&state=" . STATE
         . "&redirect_uri=https://localhost/fbauth-success'>Se connecter avec Facebook</a>";
-    echo "<a href='https://id.twitch.tv/oauth2/authorize?response_type=code"
-        . "&client_id=" . CLIENT_TWITCH
-        . "&scope=user:read:email"
-        . "&state=" . STATE
-        . "&redirect_uri=https://localhost/twitch-success"
-        . "&prompt=consent'>Se connecter avec Twitch</a>";
 
     echo "<a href='https://discord.com/api/oauth2/authorize?response_type=code"
         . "&client_id=" . CLIENT_DISCORD
@@ -76,16 +67,6 @@ function handleFbSuccess()
     echo file_get_contents($userUrl, false, $context);
 }
 
-
-function handleTwitchSuccess(){
-
-    ["state" => $state, "code" => $code] = $_GET;
-    if ($state !== STATE) {
-        throw new RuntimeException("{$state} : invalid state");
-    }
-
-    echo "connexion";
-}
 
 function handleDiscordSuccess()
 {
@@ -165,10 +146,6 @@ switch ($route) {
         break;
     case '/discord-success':
         handleDiscordSuccess();
-        break;
-
-    case '/twitch-success':
-        handleTwitchSuccess();
         break;
     case '/auth-cancel':
         handleError();
