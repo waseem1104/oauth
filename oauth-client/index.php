@@ -3,7 +3,8 @@ const CLIENT_ID = "client_60a3778e70ef02.05413444";
 const CLIENT_FBID = "3648086378647793";
 const CLIENT_SECRET = "cd989e9a4b572963e23fe39dc14c22bbceda0e60";
 const CLIENT_FBSECRET = "1b5d764e7a527c2b816259f575a59942";
-const CLIENT_DISCORD = "860542851746103326";
+const CLIENT_DISCORD = "861264462563639306";
+const CLIENT_DISCORD_SECRET = "_fxDVpnJXJKJzFh00FH8E5iODDnkOhKq";
 const STATE = "fdzefzefze";
 function handleLogin()
 {
@@ -20,7 +21,7 @@ function handleLogin()
         . "&redirect_uri=https://localhost/fbauth-success'>Se connecter avec Facebook</a>";
     echo "<a href='https://discord.com/api/oauth2/authorize?response_type=code"
         . "&client_id=" . CLIENT_DISCORD
-        . "&scope=email"
+        . "&scope=identify"
         . "&state=" . STATE
         . "&redirect_uri=https://localhost/discord-success"
         . "&prompt=consent'>Se connecter avec Discord</a>";
@@ -67,23 +68,44 @@ function handleFbSuccess()
 
 function handleDiscordSuccess()
 {
-    echo 'connecter';
-//    ["state" => $state, "code" => $code] = $_GET;
-//    if ($state !== STATE) {
-//        throw new RuntimeException("{$state} : invalid state");
-//    }
-//    // https://auth-server/token?grant_type=authorization_code&code=...&client_id=..&client_secret=...
-//    $url = "https://graph.facebook.com/oauth/access_token?grant_type=authorization_code&code={$code}&client_id=" . CLIENT_FBID . "&client_secret=" . CLIENT_FBSECRET."&redirect_uri=https://localhost/fbauth-success";
-//    $result = file_get_contents($url);
-//    $resultDecoded = json_decode($result, true);
-//    ["access_token"=> $token] = $resultDecoded;
-//    $userUrl = "https://graph.facebook.com/me?fields=id,name,email";
-//    $context = stream_context_create([
-//        'http' => [
-//            'header' => 'Authorization: Bearer ' . $token
-//        ]
-//    ]);
-//    echo file_get_contents($userUrl, false, $context);
+    ["state" => $state, "code" => $code] = $_GET;
+    if ($state !== STATE) {
+        throw new RuntimeException("{$state} : invalid state");
+    }
+    $url = "https://discord.com/api/oauth2/token";
+
+    $token = apiRequest($url, array(
+        "grant_type" => "authorization_code",
+        'client_id' => CLIENT_DISCORD,
+        'client_secret' => CLIENT_DISCORD_SECRET,
+        'redirect_uri' => 'https://localhost/discord-success',
+        'code' => $code
+    ));
+    $context = stream_context_create([
+        'http' => [
+            'header' => 'Authorization: Bearer ' . $token->access_token
+        ]
+    ]);
+    echo file_get_contents('https://discord.com/api/users/@me', false, $context);
+}
+
+function apiRequest($url, $post=FALSE, $headers=array()) {
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+
+    $response = curl_exec($ch);
+
+
+    if($post)
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+
+    $headers[] = 'Accept: application/json';
+
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    $response = curl_exec($ch);
+    return json_decode($response);
 }
 
 function getUser($params)
