@@ -94,7 +94,10 @@ function handleGithubSuccess(){
         'code' => $code
     ));
 
-    echo $token->access_token;
+    $urlUser = "https://api.github.com/user";
+    $data = apiRequest($urlUser,false,['Authorization: Bearer ' . $token->access_token, 'User-Agent: PHP']);
+
+    var_dump($data);
 
 
 }
