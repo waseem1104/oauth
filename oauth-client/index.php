@@ -5,8 +5,8 @@ const CLIENT_SECRET = "cd989e9a4b572963e23fe39dc14c22bbceda0e60";
 const CLIENT_FBSECRET = "1b5d764e7a527c2b816259f575a59942";
 const CLIENT_DISCORD = "861264462563639306";
 const CLIENT_DISCORD_SECRET = "_fxDVpnJXJKJzFh00FH8E5iODDnkOhKq";
-const CLIENT_GITHUB = "065edd9f71dabc71176d";
-const CLIENT_GITHUB_SECRET = "bf0713ea1c9031cca6da52694e19fe665257a53e";
+const CLIENT_GITHUB = "6c216a58eb5bc5a3a1e5";
+const CLIENT_GITHUB_SECRET = "142227221bf6a0dac5a7f03dd3e08ac897dcdb13";
 const STATE = "fdzefzefze";
 function handleLogin()
 {
@@ -31,7 +31,7 @@ function handleLogin()
 
     echo "<a href='https://github.com/login/oauth/authorize?response_type=code"
         . "&client_id=" . CLIENT_GITHUB
-        . "&scope=identify"
+        . "&scope=user"
         . "&state=" . STATE
         . "&redirect_uri=https://localhost/github-success"
         . "&prompt=consent'>Se connecter avec Github</a>";
@@ -83,7 +83,19 @@ function handleGithubSuccess(){
         throw new RuntimeException("{$state} : invalid state");
     }
 
-    echo "connexion";
+    $url = "https://github.com/login/oauth/access_token";
+
+
+    $token = apiRequest($url, array(
+        "grant_type" => "authorization_code",
+        'client_id' => CLIENT_GITHUB,
+        'client_secret' => CLIENT_GITHUB_SECRET,
+        'redirect_uri' => 'https://localhost/github-success',
+        'code' => $code
+    ));
+
+    echo $token->access_token;
+
 
 }
 
@@ -115,9 +127,6 @@ function apiRequest($url, $post=FALSE, $headers=array()) {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-
-    $response = curl_exec($ch);
-
 
     if($post)
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
