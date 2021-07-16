@@ -39,15 +39,31 @@ class OauthProvider extends Provider
 
     public function handleOauthSuccess(){
 
-        $getToken = $this->getToken();
-        $urlUser = "http://oauth-server:8081/me";
+        ["state" => $state, "code" => $code] = $_GET;
+        if ($state !== $this->state) {
+            throw new RuntimeException("{$state} : invalid state");
+        }
+        // https://auth-server/token?grant_type=authorization_code&code=...&client_id=..&client_secret=...
+        $this->getUser([
+            'grant_type' => "authorization_code",
+            "code" => $code,
+        ]);
+    }
 
-        $array = [
-            'Authorization: Bearer ' .  $getToken->access_token
-        ];
+    function getUser($params)
+    {
+        $url = "http://oauth-server:8081/token?client_id=" . $this->clientId . "&client_secret=" . $this->clientSecret . "&" . http_build_query($params);
+        $result = file_get_contents($url);
+        $result = json_decode($result, true);
+        $token = $result['access_token'];
 
-        var_dump($this->getInfos($urlUser,$array));
-
+        $apiUrl = "http://oauth-server:8081/me";
+        $context = stream_context_create([
+            'http' => [
+                'header' => 'Authorization: Bearer ' . $token
+            ]
+        ]);
+        echo file_get_contents($apiUrl, false, $context);
     }
 
 
