@@ -4,6 +4,7 @@ ini_set("display_errors",true);
 
 use App\Provider\GithubProvider;
 use App\Provider\DiscordProvider;
+use App\Provider\FacebookProvider;
 require 'Autoload.php';
 
 Autoload::register();
@@ -21,6 +22,7 @@ Autoload::register();
 
 $github = new GithubProvider("6c216a58eb5bc5a3a1e5","142227221bf6a0dac5a7f03dd3e08ac897dcdb13","fdzefzefze");
 $discord = new DiscordProvider("861264462563639306","_fxDVpnJXJKJzFh00FH8E5iODDnkOhKq","fdzefzefze");
+$facebook = new FacebookProvider("2900632103586316","a29d3b2cf8df42354e1d29e9538a62d0","fdzefzefze");
 $route = strtok($_SERVER["REQUEST_URI"], "?");
 
 
@@ -29,17 +31,17 @@ switch ($route) {
     case '/login':
         $github->handleLogin();
         $discord->handleLogin();
+        $facebook->handleLogin();
         break;
     case '/auth-success':
         handleSuccess();
         break;
     case '/fbauth-success':
-        handleFbSuccess();
+        $facebook->handleFacebookSuccess();
         break;
     case '/discord-success':
         $discord->handleDiscordSuccess();
         break;
-
     case '/github-success':
         $github->handleGithubSuccess();
         break;
