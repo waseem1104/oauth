@@ -3,6 +3,7 @@ namespace App;
 ini_set("display_errors",true);
 
 use App\Provider\GithubProvider;
+use App\Provider\DiscordProvider;
 require 'Autoload.php';
 
 Autoload::register();
@@ -19,6 +20,7 @@ Autoload::register();
 
 
 $github = new GithubProvider("6c216a58eb5bc5a3a1e5","142227221bf6a0dac5a7f03dd3e08ac897dcdb13","fdzefzefze");
+$discord = new DiscordProvider("861264462563639306","_fxDVpnJXJKJzFh00FH8E5iODDnkOhKq","fdzefzefze");
 $route = strtok($_SERVER["REQUEST_URI"], "?");
 
 
@@ -26,6 +28,7 @@ $route = strtok($_SERVER["REQUEST_URI"], "?");
 switch ($route) {
     case '/login':
         $github->handleLogin();
+        $discord->handleLogin();
         break;
     case '/auth-success':
         handleSuccess();
@@ -34,7 +37,7 @@ switch ($route) {
         handleFbSuccess();
         break;
     case '/discord-success':
-        handleDiscordSuccess();
+        $discord->handleDiscordSuccess();
         break;
 
     case '/github-success':
