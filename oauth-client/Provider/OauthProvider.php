@@ -66,5 +66,11 @@ class OauthProvider extends Provider
         echo file_get_contents($apiUrl, false, $context);
     }
 
+    function handleError()
+    {
+        ["state" => $state] = $_GET;
+        echo "{$state} : Request cancelled";
+    }
+
 
 }

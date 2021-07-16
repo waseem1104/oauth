@@ -49,7 +49,7 @@ switch ($route) {
         $github->handleGithubSuccess();
         break;
     case '/auth-cancel':
-        handleError();
+        $oauth->handleError();
         break;
     case '/password':
         if ($_SERVER['REQUEST_METHOD'] === "GET") {
@@ -60,7 +60,7 @@ switch ($route) {
             echo '</form>';
         } else {
             ["username" => $username, "password" => $password] = $_POST;
-            getUser([
+            $oauth->getUser([
                 'grant_type' => "password",
                 "username" => $username,
                 "password" => $password
