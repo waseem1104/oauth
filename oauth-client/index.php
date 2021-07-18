@@ -1,6 +1,6 @@
 <?php
 namespace App;
-ini_set("display_errors",true);
+//ini_set("display_errors",true);
 
 use App\Provider\GithubProvider;
 use App\Provider\DiscordProvider;
