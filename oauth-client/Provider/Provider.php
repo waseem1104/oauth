@@ -9,10 +9,12 @@ class Provider
 
     public function getToken(){
 
+
         ["state" => $state, "code" => $code] = $_GET;
         if ($state !== $this->state) {
             throw new RuntimeException("{$state} : invalid state");
         }
+
 
         $array = [
 

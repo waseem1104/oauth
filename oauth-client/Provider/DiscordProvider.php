@@ -9,9 +9,11 @@ class DiscordProvider extends Provider
     protected $clientId;
     protected $clientSecret;
     protected $state;
-
+    protected $urlUser = "https://discord.com/api/users/@me";
     protected $url = "https://discord.com/api/oauth2/token";
     protected $redirectUri = "https://localhost/discord-success";
+
+    private $scope = ["identify"];
 
     /**
      * GithubProvider constructor.
@@ -31,7 +33,7 @@ class DiscordProvider extends Provider
 
         echo "<a href='https://discord.com/api/oauth2/authorize?response_type=code"
             . "&client_id=" . $this->clientId
-            . "&scope=identify"
+            . "&scope=" . implode(",",$this->scope)
             . "&state=" . $this->state
             . "&redirect_uri=https://localhost/discord-success"
             . "&prompt=consent'>Se connecter avec Discord</a>";
@@ -42,13 +44,12 @@ class DiscordProvider extends Provider
     public function handleDiscordSuccess(){
 
         $getToken = $this->getToken();
-        $urlUser = "https://discord.com/api/users/@me";
 
         $array = [
             'Authorization: Bearer ' .  $getToken->access_token
         ];
 
-        var_dump($this->getInfos($urlUser,$array));
+        var_dump($this->getInfos($this->urlUser,$array));
 
     }
 

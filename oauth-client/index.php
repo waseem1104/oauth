@@ -11,16 +11,6 @@ require 'Autoload.php';
 Autoload::register();
 
 
-
-/**
- * AUTH CODE WORKFLOW
- * => Generate link (/login)
- * => Get Code (/auth-success)
- * => Exchange Code <> Token (/auth-success)
- * => Exchange Token <> User info (/auth-success)
- */
-
-
 $github = new GithubProvider("6c216a58eb5bc5a3a1e5","142227221bf6a0dac5a7f03dd3e08ac897dcdb13","fdzefzefze");
 $discord = new DiscordProvider("861264462563639306","_fxDVpnJXJKJzFh00FH8E5iODDnkOhKq","fdzefzefze");
 $facebook = new FacebookProvider("2900632103586316","a29d3b2cf8df42354e1d29e9538a62d0","fdzefzefze");
