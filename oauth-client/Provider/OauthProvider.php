@@ -9,9 +9,11 @@ class OauthProvider extends Provider
     protected $clientId;
     protected $clientSecret;
     protected $state;
-
+    protected $apiUrl = "http://oauth-server:8081/me";
     protected $url = "http://oauth-server:8081/token";
     protected $redirectUri = "https://localhost/auth-success";
+
+    private $scope = ["basic"];
 
     /**
      * GithubProvider constructor.
@@ -31,7 +33,7 @@ class OauthProvider extends Provider
 
         echo "<a href='http://localhost:8081/auth?response_type=code"
             . "&client_id=" . $this->clientId
-            . "&scope=basic"
+            . "&scope=" . implode(",",$this->scope)
             . "&state=" . $this->state . "'>Se connecter avec Oauth Server</a>";
 
     }
@@ -57,13 +59,12 @@ class OauthProvider extends Provider
         $result = json_decode($result, true);
         $token = $result['access_token'];
 
-        $apiUrl = "http://oauth-server:8081/me";
         $context = stream_context_create([
             'http' => [
                 'header' => 'Authorization: Bearer ' . $token
             ]
         ]);
-        echo file_get_contents($apiUrl, false, $context);
+        echo file_get_contents($this->apiUrl, false, $context);
     }
 
     function handleError()

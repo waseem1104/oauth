@@ -9,9 +9,11 @@ class FacebookProvider extends Provider
     protected $clientId;
     protected $clientSecret;
     protected $state;
-
+    protected $urlUser = "https://graph.facebook.com/me?fields=id,name,email";
     protected $url = "https://graph.facebook.com/oauth/access_token";
     protected $redirectUri = "https://localhost/fbauth-success";
+
+    private $scope = ["email"];
 
     /**
      * GithubProvider constructor.
@@ -31,7 +33,7 @@ class FacebookProvider extends Provider
 
         echo "<a href='https://www.facebook.com/v2.10/dialog/oauth?response_type=code"
             . "&client_id=" . $this->clientId
-            . "&scope=email"
+            . "&scope=" . implode(",",$this->scope)
             . "&state=" . $this->state
             . "&redirect_uri=https://localhost/fbauth-success'>Se connecter avec Facebook</a>";
 
@@ -41,13 +43,11 @@ class FacebookProvider extends Provider
     public function handleFacebookSuccess(){
 
         $getToken = $this->getToken();
-        $urlUser = "https://graph.facebook.com/me?fields=id,name,email";
-
         $array = [
             'Authorization: Bearer ' .  $getToken->access_token
         ];
 
-        var_dump($this->getInfos($urlUser,$array));
+        var_dump($this->getInfos($this->urlUser,$array));
 
     }
 
